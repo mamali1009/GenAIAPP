@@ -6,10 +6,6 @@ import psycopg2
 from Universal_Variables import *          
 import boto3
 import json
-import os
-st.set_page_config(page_title="Streamlit on AWS Lambda")
-port=int(os.environ.get("PORT",8501))
-st.write(f"App running on port {port}")
 if 'logged_in' not in st.session_state:
     st.session_state['logged_in'] = False
 
