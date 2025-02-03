@@ -1,0 +1,14 @@
+version: 0.0
+os: linux
+files:
+  - source: /
+  - destination: /home/ec2-user/GenAIAPP/GenAIAPP
+hooks:
+  BeforeInstall:
+  - location: scripts/install_dependencies.sh
+  timeout: 300
+  runas: ubuntu
+ApplicationStart:
+  -location: scripts/start_streamlit.sh
+  timeout: 300
+  runas: ubuntu
