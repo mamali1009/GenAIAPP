@@ -2,9 +2,9 @@ version: 0.0
 os: linux
 files:
   - source: /
-  - destination: /home/ec2-user/GenAIAPP/GenAIAPP
+  - destination: /home/ec2-user/Carrental
 permissions:
-  -object: /home/ec2-user/GenAIAPP/GenAIAPP/start_streamlit.sh
+  -object: /home/ec2-user/Carrental/start_streamlit.sh
   owner: ec2-user
   group: ec2-user
   mode: 755
