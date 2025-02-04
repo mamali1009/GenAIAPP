@@ -4,6 +4,5 @@ psycopg
 psycopg-binary
 psycopg2-binary
 langchain
-langchain-postgres
 langchain-aws
 langchain-community
