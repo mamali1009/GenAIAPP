@@ -18,7 +18,7 @@ jobs:
      - name: Deploy Application
        run: |
          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
-           cd /home/ec2-user/yourrepo  # Change to your repo path
+           cd /home/ec2-user/GenAIAPP  # Change to your repo path
            git pull origin main
            pip3 install -r requirements.txt  # Ensure dependencies are installed
            pkill -f streamlit  # Stop any running Streamlit process
