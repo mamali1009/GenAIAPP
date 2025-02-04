@@ -2,25 +2,37 @@ name: Deploy Streamlit App to EC2
 on:
  push:
    branches:
-     - main  # Change if using another branch
+     - main  # Trigger on push to the main branch (adjust as needed)
 jobs:
  deploy:
-   runs-on: ubuntu-latest
+   runs-on: ubuntu-latest  # Use a GitHub-hosted runner
    steps:
-     - name: Checkout Repository
-       uses: actions/checkout@v3
-     - name: Set Up SSH Key
+     # Checkout the repository
+     - name: Checkout repository
+       uses: actions/checkout@v2
+     # Set up SSH for connecting to EC2
+     - name: Set up SSH
+       uses: webfactory/ssh-agent@v0.5.3
+       with:
+         ssh-private-key: ${{ secrets.EC2_SSH_KEY }}  # Add your EC2 private key to GitHub secrets
+     # SSH into EC2, pull the latest code and run Streamlit in tmux
+     - name: Deploy to EC2
        run: |
-         mkdir -p ~/.ssh
-         echo "${{ secrets.EC2_KEY }}" > ~/.ssh/id_rsa
-         chmod 600 ~/.ssh/id_rsa
-         ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
-     - name: Deploy Application
-       run: |
-         ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
-           cd /home/ec2-user/GenAIAPP  # Change to your repo path
-           git pull origin main
-           pip3 install -r requirements.txt  # Ensure dependencies are installed
-           pkill -f streamlit  # Stop any running Streamlit process
-           nohup streamlit run streamlit2.py --server.port 8501 --server.enableCORS false > streamlit.log 2>&1 &
+         ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_PUBLIC_IP }} << 'EOF'
+           # Navigate to the repository directory
+           cd /home/ec2-user/GenAIAPP || exit 1
+           # Pull the latest code from GitHub
+           git pull origin main || exit 1
+           # Install dependencies (if needed)
+           pip install -r requirements.txt || exit 1
+           # Start Streamlit app in a tmux session (or restart if tmux session exists)
+           tmux has-session -t streamlit_session 2>/dev/null
+           if [ $? != 0 ]; then
+             # If tmux session doesn't exist, create it and run Streamlit
+             tmux new-session -d -s streamlit_session 'streamlit run streamlit2.py --server.port 8501 --server.enableCORS false'
+           else
+             # If tmux session exists, just send the command to reload Streamlit
+             tmux send-keys -t streamlit_session C-c
+             tmux send-keys -t streamlit_session 'streamlit run streamlit2.py --server.port 8501 --server.enableCORS false' C-m
+           fi
          EOF
