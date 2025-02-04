@@ -19,14 +19,6 @@ jobs:
          cd /home/ec2-user/GenAIAPP
          git pull origin main
          pip3 install -r requirements.txt
-         # Check if tmux session exists
-         tmux has-session -t streamlit_session 2>/dev/null
-         if [ $? != 0 ]; then
-           # If session doesn't exist, create a new tmux session and run Streamlit
-           tmux new-session -d -s streamlit_session 'streamlit run streamlit2.py --server.port 8501 --server.enableCORS false'
-         else
-           # If tmux session exists, just send the command to reload Streamlit
-           tmux send-keys -t streamlit_session C-c
-           tmux send-keys -t streamlit_session 'streamlit run streamlit2.py --server.port 8501 --server.enableCORS false' C-m
-         fi
+         tmux kill-session -t streamlit_session 2>/dev/null || true
+         tmux new-session -d -s stream_session 'streamlit run streamlit2.py --server.port 8501 --server.enableCORS false'
        EOF
