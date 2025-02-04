@@ -527,7 +527,7 @@ def main_app_chatbot():
                 response = "Please enter a number between 0 and 6."
 
         elif st.session_state.current_question == 'vehicle_type':
-            if prompt.title() in ['Sedan', 'SUV', 'Sports', 'Pickup Truck', 'Luxury']:
+            if prompt in ['Sedan', 'SUV', 'Sports', 'Pickup Truck', 'Luxury']:
                 st.session_state.data['vehicle_type'] = prompt
                 st.session_state.current_question = 'preference'
                 response = "Finally, tell me about your trip so I can suggest the best car and accessories for you:"
