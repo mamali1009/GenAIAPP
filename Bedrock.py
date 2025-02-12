@@ -9,7 +9,7 @@ def get_recommendation(prompt, content):
     bedrock = boto3.client(service_name=service_name, region_name=region_name)
     message = {"role": "user", "content": [{"text": content}, {"text": prompt}]}
     messages = [message]
-    inference_config = {"temperature": 0 , "topP": 0.9, "maxTokens": 4000}  # temperature, topP and token size can be changed
+    inference_config = {"temperature": 0.7 , "topP": 0.9, "maxTokens": 4000}  # temperature, topP and token size can be changed
     try:
         response = bedrock.converse(
             modelId=llm_model_id,
